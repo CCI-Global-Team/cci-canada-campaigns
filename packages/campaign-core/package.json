@@ -1,0 +1,27 @@
+{
+  "name": "@cci-campaigns/campaign-core",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./campaigns": "./src/campaigns.ts",
+    "./lead-schema": "./src/lead-schema.ts",
+    "./planning-center": "./src/planning-center.ts",
+    "./route-handler": "./src/route-handler.ts",
+    "./site": "./src/site.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@cci-campaigns/eslint-config": "workspace:*",
+    "@cci-campaigns/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  "ui": "tui",
+  "globalEnv": [
+    "NEXT_PUBLIC_SITE_URL",
+    "NEXT_PUBLIC_CHURCH_CENTER_FORM_URL",
+    "PLANNING_CENTER_USE_MOCK_SUBMISSIONS",
+    "PLANNING_CENTER_FORM_ID",
+    "PLANNING_CENTER_CLIENT_ID",
+    "PLANNING_CENTER_SECRET",
+    "PLANNING_CENTER_USER_AGENT",
+    "PLANNING_CENTER_FIELD_FIRST_NAME_ID",
+    "PLANNING_CENTER_FIELD_LAST_NAME_ID",
+    "PLANNING_CENTER_FIELD_EMAIL_ID",
+    "PLANNING_CENTER_FIELD_PHONE_ID",
+    "PLANNING_CENTER_FIELD_CITY_ID",
+    "PLANNING_CENTER_FIELD_INTERESTS_ID",
+    "PLANNING_CENTER_FIELD_CAMPAIGN_SOURCE_ID",
+    "PLANNING_CENTER_INTEREST_HOPE_OPTION_ID",
+    "PLANNING_CENTER_INTEREST_COMMUNITY_OPTION_ID",
+    "PLANNING_CENTER_INTEREST_ANSWERS_OPTION_ID",
+    "PLANNING_CENTER_INTEREST_JUST_CURIOUS_OPTION_ID"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

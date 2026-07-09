@@ -1,0 +1,29 @@
+{
+  "name": "@cci-campaigns/campaign-ui",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./campaign-page": "./src/campaign-page.tsx",
+    "./lead-form": "./src/lead-form.tsx",
+    "./styles.css": "./src/styles.css"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "generate:component": "turbo gen react-component",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cci-campaigns/eslint-config": "workspace:*",
+    "@cci-campaigns/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@cci-campaigns/campaign-core": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  }
+}
