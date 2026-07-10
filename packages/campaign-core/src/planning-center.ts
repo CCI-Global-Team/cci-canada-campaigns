@@ -2,6 +2,8 @@ import { z } from "zod";
 import type { CampaignInterest } from "./campaigns";
 import type { LeadSubmission } from "./lead-schema";
 
+const planningCenterApiVersion = "2026-06-04";
+
 const planningCenterConfigSchema = z.strictObject({
   formId: z.string().min(1),
   clientId: z.string().min(1),
@@ -45,11 +47,13 @@ export class MissingPlanningCenterConfigError extends Error {
 
 export class PlanningCenterSubmissionError extends Error {
   readonly status: number;
+  readonly retryAfterSeconds?: number;
 
-  constructor(status: number) {
+  constructor(status: number, retryAfterSeconds?: number) {
     super("Planning Center rejected the submission.");
     this.name = "PlanningCenterSubmissionError";
     this.status = status;
+    this.retryAfterSeconds = retryAfterSeconds;
   }
 }
 
@@ -125,6 +129,26 @@ function getInterestValue(
   return optionIds[interest] ?? interest;
 }
 
+function getRetryAfterSeconds(value: string | null) {
+  if (!value) {
+    return undefined;
+  }
+
+  const seconds = Number.parseInt(value, 10);
+
+  if (Number.isFinite(seconds) && seconds >= 0) {
+    return seconds;
+  }
+
+  const retryDate = Date.parse(value);
+
+  if (Number.isNaN(retryDate)) {
+    return undefined;
+  }
+
+  return Math.max(0, Math.ceil((retryDate - Date.now()) / 1000));
+}
+
 export function buildPlanningCenterPayload(
   lead: LeadSubmission,
   config: PlanningCenterConfig,
@@ -164,16 +188,6 @@ export function buildPlanningCenterPayload(
               address: lead.email,
             },
           ],
-          ...(lead.phone
-            ? {
-                phone_numbers_attributes: [
-                  {
-                    location: "Mobile",
-                    number: lead.phone,
-                  },
-                ],
-              }
-            : {}),
         },
       },
     },
@@ -182,14 +196,6 @@ export function buildPlanningCenterPayload(
       attributes: {
         form_field_id: formFieldId,
         value,
-      },
-      relationships: {
-        form_field: {
-          data: {
-            type: "FormField",
-            id: formFieldId,
-          },
-        },
       },
     })),
   };
@@ -234,13 +240,17 @@ export async function submitLeadToPlanningCenter(
         Authorization: `Basic ${credentials}`,
         "Content-Type": "application/json",
         "User-Agent": config.userAgent,
+        "X-PCO-API-Version": planningCenterApiVersion,
       },
       body: JSON.stringify(buildPlanningCenterPayload(lead, config)),
     },
   );
 
   if (!response.ok) {
-    throw new PlanningCenterSubmissionError(response.status);
+    throw new PlanningCenterSubmissionError(
+      response.status,
+      getRetryAfterSeconds(response.headers.get("Retry-After")),
+    );
   }
 
   return { mode: "live" };

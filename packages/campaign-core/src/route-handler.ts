@@ -16,8 +16,12 @@ interface LeadRouteOptions {
   fallbackHref: string;
 }
 
-function jsonResponse(body: unknown, status: number) {
-  return Response.json(body, { status });
+function jsonResponse(
+  body: unknown,
+  status: number,
+  headers?: HeadersInit,
+) {
+  return Response.json(body, { headers, status });
 }
 
 async function readJson(request: Request) {
@@ -36,6 +40,7 @@ export async function createLeadRouteResponse(
   request: Request,
   { campaign, fallbackHref }: LeadRouteOptions,
 ) {
+  // TODO(launch): Add Vercel free-tier rate limiting/firewall protection for /api/leads before live submissions.
   const input = await readJson(request);
   const parsed = parseLeadSubmission(input);
 
@@ -88,6 +93,24 @@ export async function createLeadRouteResponse(
     }
 
     if (error instanceof PlanningCenterSubmissionError) {
+      if (error.status === 429) {
+        const retryAfter = error.retryAfterSeconds;
+        const retryMessage =
+          typeof retryAfter === "number" && retryAfter > 0
+            ? `We are receiving a lot of submissions right now. Please wait ${retryAfter} seconds and try again, or use the Church Center form link.`
+            : "We are receiving a lot of submissions right now. Please try again in a moment or use the Church Center form link.";
+
+        return jsonResponse(
+          {
+            message: retryMessage,
+            fallbackHref,
+            retryAfterSeconds: retryAfter,
+          },
+          429,
+          retryAfter ? { "Retry-After": String(retryAfter) } : undefined,
+        );
+      }
+
       return jsonResponse(
         {
           message:
