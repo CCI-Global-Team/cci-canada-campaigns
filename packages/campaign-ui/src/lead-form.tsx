@@ -248,7 +248,7 @@ export function LeadForm({
           {thanksBody}
         </p>
         <a
-          className="mt-8 inline-flex rounded-full border border-[color:var(--campaign-gold)] px-5 py-3 text-sm font-bold text-[color:var(--campaign-gold)] outline-none transition hover:bg-[color:var(--campaign-gold)] hover:text-[color:var(--campaign-ink)] focus-visible:ring-2 focus-visible:ring-[color:var(--campaign-gold)]"
+          className="mt-8 inline-flex rounded-full border border-[color:var(--campaign-gold)] px-5 py-3 text-sm font-bold text-[color:var(--campaign-gold)] outline-none transition hover:bg-[color:var(--campaign-gold)] hover:text-[color:var(--campaign-ink)]! focus-visible:ring-2 focus-visible:ring-[color:var(--campaign-gold)]"
           href={nextHref}
           target="_blank"
           rel="noopener noreferrer"

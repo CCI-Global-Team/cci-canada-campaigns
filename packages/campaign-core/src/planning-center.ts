@@ -10,16 +10,12 @@ const planningCenterConfigSchema = z.strictObject({
   secret: z.string().min(1),
   userAgent: z.string().min(1),
   fieldIds: z.strictObject({
-    firstName: z.string().min(1),
-    lastName: z.string().min(1),
-    email: z.string().min(1),
     phone: z.string().min(1),
     city: z.string().min(1),
     interests: z.string().min(1),
-    campaignSource: z.string().min(1),
   }),
   interestOptionIds: z.partialRecord(
-    z.enum(["Hope", "Community", "Answers", "Just curious"]),
+    z.enum(["Hope", "Community", "Answers", "Just Curious"]),
     z.string().min(1),
   ),
 });
@@ -36,6 +32,13 @@ interface PlanningCenterValue {
 
 interface PlanningCenterSubmissionResult {
   mode: SubmissionMode;
+}
+
+interface PlanningCenterSubmissionLogInput {
+  endpoint: string;
+  payload: ReturnType<typeof buildPlanningCenterPayload>;
+  response: Response;
+  responseBody: unknown;
 }
 
 export class MissingPlanningCenterConfigError extends Error {
@@ -65,6 +68,10 @@ export function shouldUsePlanningCenterMock(env: Env = process.env) {
   return isEnabled(env.PLANNING_CENTER_USE_MOCK_SUBMISSIONS);
 }
 
+export function shouldLogPlanningCenterSubmissions(env: Env = process.env) {
+  return isEnabled(env.PLANNING_CENTER_LOG_SUBMISSIONS);
+}
+
 function getMockPlanningCenterConfig(env: Env = process.env): PlanningCenterConfig {
   return {
     formId: env.PLANNING_CENTER_FORM_ID || "mock-reboot-camp-form",
@@ -72,19 +79,15 @@ function getMockPlanningCenterConfig(env: Env = process.env): PlanningCenterConf
     secret: "mock-secret",
     userAgent: env.PLANNING_CENTER_USER_AGENT || "CCI Campaigns Local Mock",
     fieldIds: {
-      firstName: "mock-field-first-name",
-      lastName: "mock-field-last-name",
-      email: "mock-field-email",
       phone: "mock-field-phone",
       city: "mock-field-city",
       interests: "mock-field-interests",
-      campaignSource: "mock-field-campaign-source",
     },
     interestOptionIds: {
       Hope: "mock-option-hope",
       Community: "mock-option-community",
       Answers: "mock-option-answers",
-      "Just curious": "mock-option-just-curious",
+      "Just Curious": "mock-option-just-curious",
     },
   };
 }
@@ -96,19 +99,15 @@ function getPlanningCenterConfig(env: Env = process.env): PlanningCenterConfig {
     secret: env.PLANNING_CENTER_SECRET,
     userAgent: env.PLANNING_CENTER_USER_AGENT,
     fieldIds: {
-      firstName: env.PLANNING_CENTER_FIELD_FIRST_NAME_ID,
-      lastName: env.PLANNING_CENTER_FIELD_LAST_NAME_ID,
-      email: env.PLANNING_CENTER_FIELD_EMAIL_ID,
       phone: env.PLANNING_CENTER_FIELD_PHONE_ID,
       city: env.PLANNING_CENTER_FIELD_CITY_ID,
       interests: env.PLANNING_CENTER_FIELD_INTERESTS_ID,
-      campaignSource: env.PLANNING_CENTER_FIELD_CAMPAIGN_SOURCE_ID,
     },
     interestOptionIds: {
       Hope: env.PLANNING_CENTER_INTEREST_HOPE_OPTION_ID,
       Community: env.PLANNING_CENTER_INTEREST_COMMUNITY_OPTION_ID,
       Answers: env.PLANNING_CENTER_INTEREST_ANSWERS_OPTION_ID,
-      "Just curious": env.PLANNING_CENTER_INTEREST_JUST_CURIOUS_OPTION_ID,
+      "Just Curious": env.PLANNING_CENTER_INTEREST_JUST_CURIOUS_OPTION_ID,
     },
   });
 
@@ -149,19 +148,74 @@ function getRetryAfterSeconds(value: string | null) {
   return Math.max(0, Math.ceil((retryDate - Date.now()) / 1000));
 }
 
+function parsePlanningCenterResponseBody(value: string) {
+  if (!value.trim()) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(value) as unknown;
+  } catch {
+    return value;
+  }
+}
+
+function getPlanningCenterResponseHeaders(response: Response) {
+  const headerNames = [
+    "content-type",
+    "retry-after",
+    "x-pco-api-version",
+    "x-request-id",
+  ];
+  const headers: Record<string, string> = {};
+
+  for (const name of headerNames) {
+    const value = response.headers.get(name);
+
+    if (value) {
+      headers[name] = value;
+    }
+  }
+
+  return headers;
+}
+
+function logPlanningCenterSubmission({
+  endpoint,
+  payload,
+  response,
+  responseBody,
+}: PlanningCenterSubmissionLogInput) {
+  console.info(
+    "[cci-campaigns] Planning Center live submission",
+    JSON.stringify(
+      {
+        request: {
+          method: "POST",
+          endpoint,
+          apiVersion: planningCenterApiVersion,
+          payload,
+        },
+        response: {
+          ok: response.ok,
+          status: response.status,
+          statusText: response.statusText,
+          headers: getPlanningCenterResponseHeaders(response),
+          body: responseBody,
+        },
+      },
+      null,
+      2,
+    ),
+  );
+}
+
 export function buildPlanningCenterPayload(
   lead: LeadSubmission,
   config: PlanningCenterConfig,
 ) {
   const values: PlanningCenterValue[] = [
-    { formFieldId: config.fieldIds.firstName, value: lead.firstName },
-    { formFieldId: config.fieldIds.lastName, value: lead.lastName },
-    { formFieldId: config.fieldIds.email, value: lead.email },
     { formFieldId: config.fieldIds.city, value: lead.city },
-    {
-      formFieldId: config.fieldIds.campaignSource,
-      value: lead.campaign,
-    },
   ];
 
   if (lead.phone) {
@@ -231,8 +285,10 @@ export async function submitLeadToPlanningCenter(
   const credentials = Buffer.from(
     `${config.clientId}:${config.secret}`,
   ).toString("base64");
+  const payload = buildPlanningCenterPayload(lead, config);
+  const endpoint = `https://api.planningcenteronline.com/people/v2/forms/${config.formId}/form_submissions`;
   const response = await fetch(
-    `https://api.planningcenteronline.com/people/v2/forms/${config.formId}/form_submissions`,
+    endpoint,
     {
       method: "POST",
       headers: {
@@ -242,9 +298,19 @@ export async function submitLeadToPlanningCenter(
         "User-Agent": config.userAgent,
         "X-PCO-API-Version": planningCenterApiVersion,
       },
-      body: JSON.stringify(buildPlanningCenterPayload(lead, config)),
+      body: JSON.stringify(payload),
     },
   );
+  const responseBody = parsePlanningCenterResponseBody(await response.text());
+
+  if (shouldLogPlanningCenterSubmissions(env)) {
+    logPlanningCenterSubmission({
+      endpoint,
+      payload,
+      response,
+      responseBody,
+    });
+  }
 
   if (!response.ok) {
     throw new PlanningCenterSubmissionError(

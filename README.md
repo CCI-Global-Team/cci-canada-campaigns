@@ -52,7 +52,7 @@ Each app has an `.env.example`. Copy it to `.env.local` inside the app and provi
 - `PLANNING_CENTER_CLIENT_ID`
 - `PLANNING_CENTER_SECRET`
 - `PLANNING_CENTER_USER_AGENT`
-- Planning Center form field IDs for first name, last name, email, phone, city, interests, and campaign source
+- Planning Center form field IDs for phone, city, and interests
 - Planning Center option IDs for interest fields if the shared form uses checkbox/dropdown options
 
 Planning Center credentials must remain server-only. Do not expose them with `NEXT_PUBLIC_`.
@@ -66,6 +66,14 @@ PLANNING_CENTER_USE_MOCK_SUBMISSIONS=true
 ```
 
 Mock mode still validates and normalizes the form data, builds a Planning Center-shaped payload with local mock field IDs, logs that payload to the dev server console, and returns a successful response. It does not call Planning Center and should stay `false` in production.
+
+To inspect a live Planning Center submission while testing locally, set:
+
+```sh
+PLANNING_CENTER_LOG_SUBMISSIONS=true
+```
+
+This logs the outgoing Planning Center payload and the API response to the server console. It includes submitted names, email addresses, phone numbers, and city values, so keep it off in production.
 
 ## Checks
 

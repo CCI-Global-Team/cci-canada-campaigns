@@ -9,7 +9,7 @@ export const campaignInterests = [
   "Hope",
   "Community",
   "Answers",
-  "Just curious",
+  "Just Curious",
 ] as const;
 
 export type CampaignInterest = (typeof campaignInterests)[number];
