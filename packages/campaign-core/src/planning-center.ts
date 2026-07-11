@@ -30,6 +30,16 @@ interface PlanningCenterValue {
   value: string;
 }
 
+interface PlanningCenterPhoneValue {
+  formFieldId: string;
+  location: "Mobile";
+  number: string;
+}
+
+type PlanningCenterSubmissionValue =
+  | PlanningCenterValue
+  | PlanningCenterPhoneValue;
+
 interface PlanningCenterSubmissionResult {
   mode: SubmissionMode;
 }
@@ -214,12 +224,16 @@ export function buildPlanningCenterPayload(
   lead: LeadSubmission,
   config: PlanningCenterConfig,
 ) {
-  const values: PlanningCenterValue[] = [
+  const values: PlanningCenterSubmissionValue[] = [
     { formFieldId: config.fieldIds.city, value: lead.city },
   ];
 
   if (lead.phone) {
-    values.push({ formFieldId: config.fieldIds.phone, value: lead.phone });
+    values.push({
+      formFieldId: config.fieldIds.phone,
+      location: "Mobile",
+      number: lead.phone,
+    });
   }
 
   for (const interest of lead.interests) {
@@ -245,12 +259,19 @@ export function buildPlanningCenterPayload(
         },
       },
     },
-    included: values.map(({ formFieldId, value }) => ({
+    included: values.map((submissionValue) => ({
       type: "FormSubmissionValue",
-      attributes: {
-        form_field_id: formFieldId,
-        value,
-      },
+      attributes:
+        "number" in submissionValue
+          ? {
+              form_field_id: submissionValue.formFieldId,
+              location: submissionValue.location,
+              number: submissionValue.number,
+            }
+          : {
+              form_field_id: submissionValue.formFieldId,
+              value: submissionValue.value,
+            },
     })),
   };
 }
