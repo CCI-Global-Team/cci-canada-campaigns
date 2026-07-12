@@ -192,7 +192,9 @@ export function CampaignPage({
           <br />
           <a
             className="text-[color:var(--campaign-gold)]! hover:underline"
-            href={campaign.eventWebsite}
+            href={campaign.eventTrackingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             {campaign.eventWebsite.replace(/^https?:\/\//, "")}
           </a>{" "}

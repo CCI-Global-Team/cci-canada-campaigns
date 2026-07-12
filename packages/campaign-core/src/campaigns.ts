@@ -37,6 +37,7 @@ export interface CampaignConfig {
   eventEndDate: string;
   eventLocation: string;
   eventWebsite: string;
+  eventTrackingUrl: string;
   organizationName: string;
   contactEmail: string;
   submitLabel: string;
@@ -65,14 +66,23 @@ const sharedCampaignDetails = {
   thanksBody:
     "Check your inbox soon. We'll send you exactly what Reboot Camp is, what to expect, and why this weekend may be what you have been looking for.",
   nextLabel: "Learn About Reboot Camp Now",
-  nextHref: "https://rebootcampna.org",
 } satisfies Partial<CampaignConfig>;
+
+function withCampaignTracking(source: CampaignSlug) {
+  const url = new URL(sharedCampaignDetails.eventWebsite);
+  url.searchParams.set("utm_source", source);
+  url.searchParams.set("utm_medium", "campaign_landing_page");
+  url.searchParams.set("utm_campaign", "reboot_camp_na_2026");
+  return url.toString();
+}
 
 export const campaigns = {
   "find-the-fire": {
     ...sharedCampaignDetails,
     slug: "find-the-fire",
     source: "find-the-fire",
+    eventTrackingUrl: withCampaignTracking("find-the-fire"),
+    nextHref: withCampaignTracking("find-the-fire"),
     title: "Find the Fire",
     seoTitle: "Find the Fire | Reboot Camp North America",
     seoDescription:
@@ -96,6 +106,8 @@ export const campaigns = {
     ...sharedCampaignDetails,
     slug: "the-fire-will-find-you",
     source: "the-fire-will-find-you",
+    eventTrackingUrl: withCampaignTracking("the-fire-will-find-you"),
+    nextHref: withCampaignTracking("the-fire-will-find-you"),
     title: "The Fire Will Find You",
     seoTitle: "The Fire Will Find You | Reboot Camp North America",
     seoDescription:
