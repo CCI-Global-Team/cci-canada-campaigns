@@ -441,7 +441,7 @@ export function LeadForm({
       ) : null}
 
       <button
-        className="campaign-gradient-button mt-2 min-h-14 rounded-lg px-7 py-[18px] font-display text-[18px] font-extrabold uppercase tracking-[0.04em] text-[color:var(--campaign-ink)] shadow-[0_10px_34px_rgba(230,50,28,0.28)] outline-none hover:-translate-y-0.5 hover:shadow-[0_14px_42px_rgba(255,138,51,0.38)] focus-visible:ring-2 focus-visible:ring-[color:var(--campaign-gold)] disabled:cursor-not-allowed disabled:opacity-70"
+        className="campaign-gradient-button cursor-pointer mt-2 min-h-14 rounded-lg px-7 py-[18px] font-display text-[18px] font-extrabold uppercase tracking-[0.04em] text-[color:var(--campaign-ink)] shadow-[0_10px_34px_rgba(230,50,28,0.28)] outline-none hover:-translate-y-0.5 hover:shadow-[0_14px_42px_rgba(255,138,51,0.38)] focus-visible:ring-2 focus-visible:ring-[color:var(--campaign-gold)] disabled:cursor-not-allowed disabled:opacity-70"
         type="submit"
         disabled={state.status === "submitting"}
       >

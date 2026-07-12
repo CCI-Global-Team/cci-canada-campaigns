@@ -11,7 +11,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 
 const campaign = getCampaign("find-the-fire");
-const siteUrl = getSiteUrl("http://localhost:3000");
+const siteUrl = getSiteUrl("https://findthefire.org");
 
 function createMetadata(config: CampaignConfig): Metadata {
   const imageUrl = `${siteUrl}/images/reboot-fire-hero.png`;

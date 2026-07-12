@@ -8,8 +8,8 @@
   --campaign-ink: #170c08;
   --campaign-footer: #20130a;
   --campaign-surface: rgba(23, 12, 8, 0.34);
-  --campaign-chip: rgba(23, 12, 8, 0.24);
-  --campaign-chip-active: rgba(23, 12, 8, 0.55);
+  --campaign-chip: rgba(23, 12, 8, 0.5);
+  --campaign-chip-active: rgba(23, 12, 8, 0.65);
   --campaign-line: rgba(247, 241, 228, 0.18);
   --campaign-red: #e6321c;
   --campaign-button-red: #f05a2a;
@@ -131,7 +131,7 @@ a {
   width: 100%;
   border: 1px solid var(--campaign-line);
   border-radius: 0.625rem;
-  background: rgba(23, 12, 8, 0.28);
+  background: rgba(23, 12, 8, 0.5);
   color: var(--campaign-cream);
   min-height: 3.25rem;
   padding: 0.88rem 1rem;

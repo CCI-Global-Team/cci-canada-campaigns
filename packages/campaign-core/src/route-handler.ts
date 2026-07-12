@@ -40,7 +40,6 @@ export async function createLeadRouteResponse(
   request: Request,
   { campaign, fallbackHref }: LeadRouteOptions,
 ) {
-  // TODO(launch): Add Vercel free-tier rate limiting/firewall protection for /api/leads before live submissions.
   const input = await readJson(request);
   const parsed = parseLeadSubmission(input);
 

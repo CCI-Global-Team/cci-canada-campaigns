@@ -2,7 +2,7 @@ import { getSiteUrl } from "@cci-campaigns/campaign-core/site";
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl = getSiteUrl("http://localhost:3000");
+  const siteUrl = getSiteUrl("https://findthefire.org");
 
   return [
     {
