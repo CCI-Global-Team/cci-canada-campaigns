@@ -64,7 +64,7 @@ const sharedCampaignDetails = {
   interests: campaignInterests,
   thanksTitle: "It's Sent.",
   thanksBody:
-    "Check your inbox soon. We'll send you exactly what Reboot Camp is, what to expect, and why this weekend may be what you have been looking for.",
+    "Check your inbox soon. We'll send you exactly what Reboot Camp is, what to expect, and why this weekend will be what you have been looking for.",
   nextLabel: "Learn About Reboot Camp Now",
 } satisfies Partial<CampaignConfig>;
 
@@ -117,7 +117,7 @@ export const campaigns = {
     heroLead: "Maybe this wasn't an accident. You scanned this code for a reason.",
     heroCopy: [
       "What if the longing you can't quite explain is pointing you toward something real?",
-      "If there's even a quiet part of you wondering whether God is real, or whether He has been closer than you imagined, perhaps this is your invitation.",
+      "If there's even a quiet part of you wondering whether God is real, or whether He has been closer than you imagined, this is your invitation.",
       "Reboot Camp is a three-day experience where people gather to pause, ask honest questions, encounter timeless truth, and explore the person of Jesus through worship, prayer, biblical teaching, and authentic community.",
       "No pressure. No pretending. Just room to seek, reflect, and discover. There's room for you.",
     ],
