@@ -1,4 +1,5 @@
 import type { Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Instrument_Serif, Inter } from "next/font/google";
 import localFont from "next/font/local";
 import type { ReactNode } from "react";
@@ -58,6 +59,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         className={`${campaignSans.variable} ${campaignDisplay.variable} ${campaignSerif.variable}`}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
