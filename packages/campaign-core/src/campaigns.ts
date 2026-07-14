@@ -86,7 +86,7 @@ export const campaigns = {
     title: "Find the Fire",
     seoTitle: "Find the Fire | Reboot Camp North America",
     seoDescription:
-      "Rediscover your passion for God at Reboot Camp Toronto, September 4-6, 2026. Leave your details to receive event updates.",
+      "Rediscover your passion for God at Reboot Camp North America, September 4-6, 2026. Leave your details to receive event updates.",
     eyebrow: "Reboot Camp North America",
     heroTitle: "Find the Fire",
     heroLead: "You're not alone in this.",
@@ -111,7 +111,7 @@ export const campaigns = {
     title: "The Fire Will Find You",
     seoTitle: "The Fire Will Find You | Reboot Camp North America",
     seoDescription:
-      "Maybe this invitation is not an accident. Learn more about Reboot Camp Toronto, September 4-6, 2026.",
+      "Maybe this invitation is not an accident. Learn more about Reboot Camp North America, September 4-6, 2026.",
     eyebrow: "Reboot Camp North America",
     heroTitle: "The Fire\nWill Find You",
     heroLead: "Maybe this wasn't an accident. You scanned this code for a reason.",
