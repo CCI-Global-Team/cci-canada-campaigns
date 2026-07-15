@@ -14,7 +14,7 @@ const campaign = getCampaign("the-fire-will-find-you");
 const siteUrl = getSiteUrl("https://thefirewillfindyou.com");
 
 function createMetadata(config: CampaignConfig): Metadata {
-  const imageUrl = `${siteUrl}/images/reboot-fire-hero.png`;
+  const imageUrl = `${siteUrl}/images/the-fire-will-find-you.jpg`;
 
   return {
     metadataBase: new URL(siteUrl),
@@ -34,9 +34,9 @@ function createMetadata(config: CampaignConfig): Metadata {
       images: [
         {
           url: imageUrl,
-          width: 1536,
-          height: 1024,
-          alt: `${config.title} Reboot Camp firelight background`,
+          width: 1122,
+          height: 1402,
+          alt: `${config.title} Reboot Camp poster`,
         },
       ],
     },
@@ -65,6 +65,15 @@ export default function Home() {
           priority
           sizes="100vw"
           className="object-cover object-center"
+        />
+      }
+      heroSideVisual={
+        <Image
+          src="/images/the-fire-will-find-you.jpg"
+          alt=""
+          fill
+          sizes="(min-width: 1181px) 34vw, (min-width: 641px) 28rem, 86vw"
+          className="object-cover"
         />
       }
     />
